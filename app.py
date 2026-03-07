@@ -2,8 +2,8 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from pdf_ingestion import (extract_text_from_pdf)
-from skill_extraction import (extract_skills)
+from pdf_ingestion import extract_text_from_pdf
+from skill_extraction import extract_skills, ROLES
 
 def initialize():
     st.set_page_config(
@@ -25,6 +25,19 @@ def initialize():
     """, unsafe_allow_html=True)
 
     st.markdown("""
+    <div style="margin-bottom: 2rem;">
+        <div style="
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--muted);
+            margin-bottom: 0.4rem;
+        ">Resume Intelligence Platform</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Space+Grotesk:wght@500;700&display=swap');
 
@@ -33,7 +46,7 @@ def initialize():
         --surface:  #1a1a1a;
         --surface2: #222222;
         --border:   #2e2e2e;
-        --accent:   #f0a500;      /* hello this is the brand colour */
+        --accent:   #f0a500;      /* your brand color — change this one line to retheme everything */
         --accent-dim: #7a5200;
         --text:     #f0ede8;
         --muted:    #6b6b6b;
@@ -118,7 +131,6 @@ def sidebar_uploads():
     with st.sidebar:
         st.markdown("Upload your files here:")
 
-        # Should only be uploaded once
         uploaded_resume = st.file_uploader("Upload your Resume", type="pdf")
 
         if st.button("Save Resume"):
@@ -134,18 +146,23 @@ def sidebar_uploads():
         if st.session_state["resume_saved"]:
             st.success("Resume saved!")
 
-        # Should have to be changed every time
+        st.selectbox(
+            "Filter by job type",
+            options=["All"] + ROLES,
+            key="selected_role"
+        )
+
         uploaded_job_desc = st.file_uploader("Upload the job description", type="pdf")
 
         analyze_job = st.button("Analyze Job")
 
-        # This is a button that exists in the sidebar but will also trigger something on the main page!
         if analyze_job:
             if uploaded_job_desc:
                 with st.spinner("Analyzing..."):
-                    saved_job_desc = uploaded_job_desc
+                    job_text = extract_text_from_pdf(uploaded_job_desc)
+                    job_skills = extract_skills(job_text)
+                    st.session_state["job_skills"] = job_skills
                     st.session_state["job_analyzed"] = True
-
             else:
                 st.warning("You need to upload your job description first")
 
