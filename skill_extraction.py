@@ -71,6 +71,6 @@ def detect_role(text: str):
         if role in text:
             return role
 
-    start = text.index("Position: ") + len("Position: ")
-    final = text.index("Co-op Work Term Posted:")
-    return text[start:final]
+    start = text.index("position: ") + len("position: ")
+    final = text.index("co-op work term posted:")
+    return (text[start:final], 0)
