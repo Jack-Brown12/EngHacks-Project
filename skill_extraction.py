@@ -1,30 +1,62 @@
 import spacy
 from spacy.matcher import PhraseMatcher
 from rapidfuzz import fuzz
-from sentence_transformers import SentenceTransformer, util
 import re
 
 nlp = spacy.load("en_core_web_sm")
-sentence_model = SentenceTransformer('all-MiniLM-L6-v2')
 
 SKILLS = {
     "Python": ["python", "py"],
     "Java": ["java"],
-    "C++": ["c++"],
-    "SQL": ["sql", "postgres", "postgresql", "mysql"],
+    "C++": ["c++", "cpp"],
+    "C#": ["c#", "c-sharp"],
+    "SQL": ["sql", "postgres", "postgresql", "mysql", "mssql", "sqlite"],
     "JavaScript": ["javascript", "js"],
     "TypeScript": ["typescript", "ts"],
+    "Go": ["go", "golang"],
+    "Ruby": ["ruby", "rb"],
+    "PHP": ["php"],
     "React": ["react", "react.js"],
+    "Angular": ["angular", "angular.js"],
+    "Vue.js": ["vue", "vue.js"],
+    "Svelte": ["svelte"],
     "Node.js": ["node.js", "node js", "node"],
+    "Express": ["express", "express.js", "expressjs"],
+    "Django": ["django", "dj"],
+    "Flask": ["flask"],
     "Docker": ["docker"],
     "Kubernetes": ["k8s", "kubernetes"],
     "AWS": ["aws", "amazon web services"],
-    "Git": ["git"],
-    "Linux": ["linux", "ubuntu", "debian"],
+    "Azure": ["azure", "microsoft azure"],
+    "GCP": ["gcp", "google cloud", "google cloud platform"],
+    "Terraform": ["terraform"],
+    "Jenkins": ["jenkins"],
+    "GitLab CI": ["gitlab ci", "gitlab"],
+    "CircleCI": ["circleci"],
+    "Git": ["git", "github", "gitlab", "bitbucket"],
+    "Linux": ["linux", "ubuntu", "debian", "centos", "fedora"],
     "MongoDB": ["mongodb", "mongo"],
     "PostgreSQL": ["postgresql", "postgres"],
+    "MySQL": ["mysql"],
+    "Redis": ["redis"],
+    "Elasticsearch": ["elasticsearch", "es"],
     "TensorFlow": ["tensorflow", "tf"],
-    "PyTorch": ["pytorch", "torch"]
+    "PyTorch": ["pytorch", "torch"],
+    "scikit-learn": ["scikit-learn", "sklearn"],
+    "Keras": ["keras"],
+    "XGBoost": ["xgboost"],
+    "LightGBM": ["lightgbm"],
+    "OpenCV": ["opencv", "cv2"],
+    "Spark": ["spark", "pyspark"],
+    "Hadoop": ["hadoop"],
+    "Kafka": ["kafka"],
+    "NumPy": ["numpy", "np"],
+    "Pandas": ["pandas", "pd"],
+    "Matplotlib": ["matplotlib", "plt"],
+    "Seaborn": ["seaborn", "sns"],
+    "Plotly": ["plotly"],
+    "BeautifulSoup": ["beautifulsoup", "bs4"],
+    "Selenium": ["selenium"],
 }
 
 ROLES = [
@@ -36,49 +68,56 @@ ROLES = [
 ]
 
 matcher = PhraseMatcher(nlp.vocab, attr="LOWER")
-patterns = [nlp.make_doc(skill) for skill in SKILLS.keys()]
-matcher.add("SKILLS", patterns)
+for skill_name, aliases in SKILLS.items():
+    patterns = [nlp.make_doc(alias) for alias in aliases]
+    matcher.add(skill_name, patterns)
 
 def extract_skills(text: str, fuzzy_threshold: int = 85):
     doc = nlp(text)
     matches = matcher(doc)
+    found_skills = set()
 
-    found_skills = {}
-
+    # 1. Exact Matching
     for match_id, start, end in matches:
-        span_text = doc[start:end].text
-        found_skills[span_text] = 100 
+        skill_name = nlp.vocab.strings[match_id]
+        found_skills.add(skill_name) 
 
     text_lower = text.lower()
+    words = re.findall(r'\b[a-z0-9+#.]+\b', text_lower)
 
-    text_words = re.findall(r'\b\w+\b', text_lower)  # split into words
-
+    # 2. Fuzzy Matching
     for skill, aliases in SKILLS.items():
+        if skill in found_skills:
+            continue
+            
         for alias in aliases:
-            if " " in alias:
-                # multi-word phrase, compare to full text
-                ratio = fuzz.partial_ratio(alias.lower(), text_lower)
-                if ratio >= fuzzy_threshold:
-                    found_skills[skill] = max(found_skills.get(skill, 0), ratio)
+            alias_low = alias.lower()
+            if " " in alias_low:
+                if fuzz.partial_ratio(alias_low, text_lower) >= fuzzy_threshold:
+                    found_skills.add(skill)
+                    break 
             else:
-                # single word, compare to individual words
-                for word in text_words:
-                    ratio = fuzz.ratio(alias.lower(), word)
-                    if ratio >= fuzzy_threshold:
-                        found_skills[skill] = max(found_skills.get(skill, 0), ratio)
-    return sorted(found_skills.items(), key=lambda x: x[1], reverse=True)
+                for word in words:
+                    if fuzz.ratio(alias_low, word) >= fuzzy_threshold:
+                        found_skills.add(skill)
+                        break 
+
+    return list(found_skills)
 
 def detect_role(text: str):
-    """
-    :param text:
-    :return: finds the name of a job posting
-    """
-    text = text.lower()
+    text_lower = text.lower()
 
     for role in ROLES:
-        if role in text:
+        if role in text_lower:
             return role
 
-    start = text.index("position: ") + len("position: ")
-    final = text.index("co-op work term posted:")
-    return (text[start:final], 0)
+    try:
+        start_marker = "position: "
+        end_marker = "co-op work term posted:"
+        
+        start_idx = text_lower.index(start_marker) + len(start_marker)
+        end_idx = text_lower.index(end_marker)
+        
+        return text[start_idx:end_idx].strip()
+    except ValueError:
+        return "Unknown Role"
