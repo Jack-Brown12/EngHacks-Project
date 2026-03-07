@@ -22,23 +22,15 @@ for skills in df["job_skills"]:
 print("Successfully created skill frequency dictionary.")
 
 
-# Change frequency into percent occurrence using frequency/num postings * 100
+# Make a list containing tuples of (skill, frequency) for each skill in the dataset that has a frequency greater than 1.
 total_postings = len(df)
-common_skills = [(skill, frequency) for skill, frequency in skill_frequency.items() if frequency / total_postings * 100 >= 10]
-uncommon_skills = [(skill, frequency) for skill, frequency in skill_frequency.items() if frequency / total_postings * 100 >= 5 and frequency / total_postings * 100 < 10]
-rare_skills = [(skill, frequency) for skill, frequency in skill_frequency.items() if frequency / total_postings * 100 > 0.5 and frequency / total_postings * 100 < 5]
+skills = [(skill, frequency) for skill, frequency in skill_frequency.items() if frequency > 1]
 
-print("Successfully categorized skills into common, uncommon, and rare.")
+print("Successfully made skill list.")
 
-# Write skills to separate text files with percent occurrence.
-with open("common_skills.txt", "w") as outfile:
-    for skill, frequency in common_skills:
-        outfile.write(f"{skill}: {frequency / total_postings * 100:.2f}%\n")
-with open("uncommon_skills.txt", "w") as outfile:
-    for skill, frequency in uncommon_skills:
-        outfile.write(f"{skill}: {frequency / total_postings * 100:.2f}%\n")
-with open("rare_skills.txt", "w") as outfile:
-    for skill, frequency in rare_skills:
+# Write skills to a text file with percent occurrence.
+with open("skills.txt", "w") as outfile:
+    for skill, frequency in skills:
         outfile.write(f"{skill}: {frequency / total_postings * 100:.2f}%\n")
 
-print("Successfully wrote skills to separate text files.")
+print("Successfully wrote skills to text file.")
