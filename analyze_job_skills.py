@@ -57,7 +57,7 @@ def get_final_market_analysis(job_skills, threshold=85):
     }
 
     for item in raw_frequencies:
-        skill = item["skill"]
+        skill = item["skill"] # skill_lower
         freq = item["frequency"]
 
         if freq is None:
