@@ -34,7 +34,7 @@ def initialize():
         font-family: 'Inter', sans-serif !important;
     }
 
-    #MainMenu, footer, header { visibility: hidden; }
+    #MainMenu, footer { visibility: hidden; }
     .block-container { padding: 2rem 3rem 4rem !important; max-width: 1200px; }
 
     [data-testid="stSidebar"] {
