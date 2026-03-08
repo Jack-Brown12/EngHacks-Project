@@ -1,9 +1,3 @@
-Database used for job comparison data:
-https://www.kaggle.com/datasets/ravindrasinghrana/job-description-dataset
-
-AI used for resume evaluation and comparison:
-
-
 # Honk Hire 🪿
 ### Resume Intelligence Plaform for Waterloo Engineering Students
 
@@ -60,6 +54,7 @@ EngHacks-Project
 ├── RIS_Calculator.py       # Relevance Index Score
 ├── requirements.txt
 └── README.md
+```
 
 ## How to Run
 
@@ -71,4 +66,7 @@ streamlit run app.py
 - spaCy — https://spacy.io  
 - RapidFuzz — https://github.com/rapidfuzz/RapidFuzz  
 - pdfplumber — https://github.com/jsvine/pdfplumber  
-- Streamlit — https://streamlit.io  
+- Streamlit — https://streamlit.io
+
+Database used for job comparison data:
+https://www.kaggle.com/datasets/ravindrasinghrana/job-description-dataset
