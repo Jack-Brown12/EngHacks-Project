@@ -44,7 +44,7 @@ Engineering students often struggle to tell whether they are actually qualified 
 ## Project Structure
 
 ```
-EngHacks-Project
+HonkHire-EngHacks-Project
 │
 ├── app.py                  # Streamlit application
 ├── pdf_ingestion.py        # PDF text extraction
