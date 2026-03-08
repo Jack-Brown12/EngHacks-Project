@@ -63,10 +63,10 @@ streamlit run app.py
 
 ## Citations
 
-- spaCy — https://spacy.io  
-- RapidFuzz — https://github.com/rapidfuzz/RapidFuzz  
-- pdfplumber — https://github.com/jsvine/pdfplumber  
-- Streamlit — https://streamlit.io
+- spaCy: https://spacy.io  
+- RapidFuzz: https://github.com/rapidfuzz/RapidFuzz  
+- pdfplumber: https://github.com/jsvine/pdfplumber  
+- Streamlit: https://streamlit.io
 
 Database used for job comparison data:
 https://www.kaggle.com/datasets/ravindrasinghrana/job-description-dataset
