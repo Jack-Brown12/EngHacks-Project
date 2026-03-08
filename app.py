@@ -143,13 +143,13 @@ def render_dashboard():
                 return sorted(s_list, key=lambda x: x.lower() in res_skills, reverse=True)
 
             with c1:
-                st.markdown("### Common (Core)")
+                st.markdown("### Core Skills")
                 for s in sort_matched(market["core_skills"]):
                     if s.lower() in res_skills: st.success(f"Matched: {s}")
                     else: st.error(f"Missing: {s}")
             
             with c2:
-                st.markdown("### Uncommon (Optional)")
+                st.markdown("### Uncommon Skills")
                 for s in sort_matched(market["optional_skills"]):
                     if s.lower() in res_skills: st.success(f"Matched: {s}")
                     else: st.warning(f"Missing: {s}")
