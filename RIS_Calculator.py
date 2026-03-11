@@ -17,7 +17,7 @@ def RIS_calculator(user_resume_skills, market_analysis):
         if skill.lower() in user_skills_set:
             score += 10
         else:
-            score -= 5
+            pass
 
     #Counts the skills classified as optional or less common
     for skill in market_analysis["optional_skills"]:
@@ -25,7 +25,7 @@ def RIS_calculator(user_resume_skills, market_analysis):
         if skill.lower() in user_skills_set:
             score += 5
         else: 
-            score -= 2
+            pass
 
     # Counts the skills classified as rare, which are worth more
     for skill in market_analysis["rare_skills"]:

@@ -134,7 +134,7 @@ def render_dashboard():
         st.markdown("## Analysis Results")
         
         col1, col2 = st.columns(2)
-        col1.metric("Relevance Index Score (RIS prounounced rizz)", f"{score}%")
+        col1.metric("Resume Impact Score (RIS prounounced rizz)", f"{score}%")
         core_match_count = len([skills for skills in market["core_skills"] if skills.lower() in res_skills])
         col2.metric("Core Skills Found", core_match_count)
 
